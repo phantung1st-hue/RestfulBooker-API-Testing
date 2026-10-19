@@ -1,0 +1,28 @@
+
+name: Restful Booker API Testing
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run API Tests
+        env:
+          BOOKER_USERNAME: ${{ secrets.BOOKER_USERNAME }}
+          BOOKER_PASSWORD: ${{ secrets.BOOKER_PASSWORD }}
+        run: |
+          newman run RestfulBooker_CICD.postman_collection.json \
+            -e RestfulBooker_CICD.postman_environment.json \
+            --env-var "username=$BOOKER_USERNAME" \
+            --env-var "password=$BOOKER_PASSWORD"
